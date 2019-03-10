@@ -47,7 +47,7 @@ import Foundation
         
     // MARK: Properties
     /// The selected index
-    public private(set) var index: UInt
+    public private(set) var index: UInt? = 0
     /// The segments available for selection
     public var segments: [BetterSegmentedControlSegment] {
         didSet {
@@ -177,7 +177,7 @@ import Foundation
     // MARK: Lifecycle
     public init(frame: CGRect,
                 segments: [BetterSegmentedControlSegment],
-                index: UInt = 0,
+                index: UInt? = 0,
                 options: [BetterSegmentedControlOption]? = nil) {
         self.index = index
         self.segments = segments
@@ -238,7 +238,7 @@ import Foundation
         normalSegmentsView.frame = bounds
         selectedSegmentsView.frame = bounds
         
-        indicatorView.frame = elementFrame(forIndex: index)
+        indicatorView.frame = index.map { elementFrame(forIndex: $0) } ?? .zero
         
         for index in 0...normalSegmentCount-1 {
             let frame = elementFrame(forIndex: UInt(index))
@@ -274,13 +274,14 @@ import Foundation
     /// - Parameters:
     ///   - index: The new index
     ///   - animated: (Optional) Whether the change should be animated or not. Defaults to true.
-    public func setIndex(_ index: UInt, animated: Bool = true) {
-        guard normalSegments.indices.contains(Int(index)) else {
+    public func setIndex(_ index: UInt?, animated: Bool = true) {
+        // If nil index, go for it, otherwise check we can select the given index
+        guard index.map({ normalSegments.indices.contains(Int($0)) }) ?? true else {
             return
         }
         let oldIndex = self.index
         self.index = index
-        moveIndicatorViewToIndex(animated, shouldSendEvent: (self.index != oldIndex || alwaysAnnouncesValue))
+        moveIndicatorViewToIndex(animated, shouldSendEvent: (self.index != oldIndex || alwaysAnnouncesValue), oldIndex: oldIndex)
     }
 
     // MARK: Indicator View Customization
@@ -292,8 +293,10 @@ import Foundation
     }
     
     // MARK: Animations
-    private func moveIndicatorViewToIndex(_ animated: Bool, shouldSendEvent: Bool) {
-        if animated {
+    private func moveIndicatorViewToIndex(_ animated: Bool, shouldSendEvent: Bool, oldIndex: UInt? = nil) {
+        // Only animate the move if we're moving between two selected sections
+        let isMovingBetweenSelectedSegments = index != nil && oldIndex != nil
+        if animated && isMovingBetweenSelectedSegments {
             if shouldSendEvent && announcesValueImmediately {
                 sendActions(for: .valueChanged)
             }
@@ -332,7 +335,9 @@ import Foundation
         return UInt(distances.index(of: distances.min()!)!)
     }
     private func moveIndicatorView() {
-        indicatorView.frame = normalSegments[Int(self.index)].frame
+        // Hide if no index by setting zero frame
+        let indicatorFrame = self.index.map { normalSegments[Int($0)].frame } ?? .zero
+        indicatorView.frame = indicatorFrame
         layoutIfNeeded()
     }
     
