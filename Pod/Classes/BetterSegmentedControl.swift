@@ -273,15 +273,15 @@ import Foundation
     ///
     /// - Parameters:
     ///   - index: The new index
-    ///   - animated: (Optional) Whether the change should be animated or not. Defaults to true.
-    public func setIndex(_ index: UInt?, animated: Bool = true) {
+    ///   - canSendEvent: (Optional) Whether the `valueChanged` event should be considered to be fired or not. Overrides `alwaysAnnouncesValue`. Defaults to `true`.
+    public func setIndex(_ index: UInt?, animated: Bool = true, canSendEvent: Bool = true) {
         // If nil index, go for it, otherwise check we can select the given index
         guard index.map({ normalSegments.indices.contains(Int($0)) }) ?? true else {
             return
         }
         let oldIndex = self.index
         self.index = index
-        moveIndicatorViewToIndex(animated, shouldSendEvent: (self.index != oldIndex || alwaysAnnouncesValue), oldIndex: oldIndex)
+        moveIndicatorViewToIndex(animated, shouldSendEvent: canSendEvent && (self.index != oldIndex || alwaysAnnouncesValue), oldIndex: oldIndex)
     }
 
     // MARK: Indicator View Customization
