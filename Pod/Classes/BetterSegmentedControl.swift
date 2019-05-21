@@ -100,6 +100,8 @@ import Foundation
             }
         }
     }
+    /// Whether the indicator should animate the change on user selection by tap. Defaults to true
+    @IBInspectable public var animatesChangeOnTap: Bool = true
     /// Whether the indicator should bounce when selecting a new index. Defaults to true
     @IBInspectable public var bouncesOnChange: Bool = true
     /// Whether the the control should always send the .ValueChanged event, regardless of the index remaining unchanged after interaction. Defaults to false
@@ -344,7 +346,7 @@ import Foundation
     // MARK: Action handlers
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer!) {
         let location = gestureRecognizer.location(in: self)
-        setIndex(nearestIndex(toPoint: location))
+        setIndex(nearestIndex(toPoint: location), animated: animatesChangeOnTap)
     }
     @objc private func panned(_ gestureRecognizer: UIPanGestureRecognizer!) {
         guard !panningDisabled else {
