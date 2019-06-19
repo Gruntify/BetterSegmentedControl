@@ -72,6 +72,33 @@ class ViewController: UIViewController {
                       .backgroundColor(UIColor(red:0.16, green:0.64, blue:0.94, alpha:1.00)),
                       .indicatorViewBackgroundColor(.white)])
         view.addSubview(iconsSegmentedControl)
+        
+        // Control 6: Separators
+        let separatorControl = BetterSegmentedControl(
+            frame: CGRect(x: 0.0, y: 450, width: view.bounds.width, height: 50),
+            segments: LabelSegment.segments(
+                withTitles: ["Recent", "Nearby", "All"],
+                normalFont: UIFont(name: "HelveticaNeue", size: 16.0)!,
+                normalTextColor: .white,
+                selectedFont: UIFont(name: "HelveticaNeue", size: 16.0)!,
+                selectedTextColor: UIColor(red:0.97, green:0.00, blue:0.24, alpha:1.00)
+            ),
+            options: [
+                .backgroundColor(UIColor(red:0.11, green:0.12, blue:0.13, alpha:1.00)),
+                .cornerRadius(0.0),
+                .bouncesOnChange(false),
+                .panningDisabled(true)
+            ]
+        )
+        
+        separatorControl.showsSeparators = true
+        separatorControl.showsSeparators = false
+        separatorControl.showsSeparators = true
+        separatorControl.separatorColor = .red
+        separatorControl.separatorWidth = 2
+        separatorControl.separatorInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        
+        view.addSubview(separatorControl)
     }
     
     // MARK: - Action handlers

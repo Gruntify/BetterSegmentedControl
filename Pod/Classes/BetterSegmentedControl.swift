@@ -55,12 +55,16 @@ import Foundation
                 return
             }
             
-            normalSegmentsView.subviews.forEach({ $0.removeFromSuperview() })
-            selectedSegmentsView.subviews.forEach({ $0.removeFromSuperview() })
+            separatorsView.subviews.forEach { $0.removeFromSuperview() }
+            normalSegmentsView.subviews.forEach { $0.removeFromSuperview() }
+            selectedSegmentsView.subviews.forEach { $0.removeFromSuperview() }
             
-            for segment in segments {
+            for (index, segment) in segments.enumerated() {
                 normalSegmentsView.addSubview(segment.normalView)
                 selectedSegmentsView.addSubview(segment.selectedView)
+                if showsSeparators && index > 0 {
+                    separatorsView.addSubview(newSeparator())
+                }
             }
             
             setNeedsLayout()
@@ -158,9 +162,36 @@ import Foundation
         }
     }
     
+    public var showsSeparators: Bool = false {
+        didSet {
+            guard showsSeparators != oldValue else { return }
+            separatorsView.subviews.forEach { $0.removeFromSuperview() }
+            if showsSeparators {
+                for (index, _) in segments.enumerated() {
+                    if index > 0 {
+                        separatorsView.addSubview(newSeparator())
+                    }
+                }
+                setNeedsLayout()
+            }
+        }
+    }
+    public var separatorColor: UIColor = .clear {
+        didSet {
+            separatorsView.subviews.forEach { $0.backgroundColor = separatorColor }
+        }
+    }
+    public var separatorWidth: CGFloat = 1 {
+        didSet { setNeedsLayout() }
+    }
+    public var separatorHeight: CGFloat = 10 {
+        didSet { setNeedsLayout() }
+    }
+    
     // MARK: Private properties
     private let normalSegmentsView = UIView()
     private let selectedSegmentsView = UIView()
+    private let separatorsView = UIView()
     private let indicatorView = IndicatorView()
     private var initialIndicatorViewFrame: CGRect?
 
@@ -211,6 +242,7 @@ import Foundation
         
         normalSegmentsView.clipsToBounds = true
         addSubview(normalSegmentsView)
+        addSubview(separatorsView)
         addSubview(indicatorView)
         selectedSegmentsView.clipsToBounds = true
         addSubview(selectedSegmentsView)
@@ -224,22 +256,27 @@ import Foundation
         
         guard segments.count > 1 else { return }
         
-        for segment in segments {
+        for (index, segment) in segments.enumerated() {
             segment.normalView.clipsToBounds = true
             normalSegmentsView.addSubview(segment.normalView)
             segment.selectedView.clipsToBounds = true
             selectedSegmentsView.addSubview(segment.selectedView)
+            if showsSeparators && index > 0 {
+                separatorsView.addSubview(newSeparator())
+            }
         }
         
         setNeedsLayout()
     }
     override open func layoutSubviews() {
         super.layoutSubviews()
+
         guard normalSegmentCount > 1 else {
             return
         }
         
         normalSegmentsView.frame = bounds
+        separatorsView.frame = bounds
         selectedSegmentsView.frame = bounds
         
         indicatorView.frame = index.map { elementFrame(forIndex: $0) } ?? .zero
@@ -248,6 +285,15 @@ import Foundation
             let frame = elementFrame(forIndex: UInt(index))
             normalSegmentsView.subviews[index].frame = frame
             selectedSegmentsView.subviews[index].frame = frame
+            if showsSeparators && index > 0 {
+                var sepFrame = CGRect.zero
+                sepFrame.size.height = separatorHeight
+                sepFrame.origin.x = frame.minX - separatorWidth / 2
+                sepFrame.size.width = separatorWidth
+                let sep = separatorsView.subviews[index - 1]
+                sep.frame = sepFrame
+                sep.center.y = separatorsView.center.y
+            }
         }
     }
     open override func prepareForInterfaceBuilder() {
@@ -270,6 +316,12 @@ import Foundation
         selectedLabelSegments.forEach {
             $0.textColor = backgroundColor
         }
+    }
+    
+    private func newSeparator() -> UIView {
+        let view = UIView()
+        view.backgroundColor = separatorColor
+        return view
     }
     
     // MARK: Index Setting
