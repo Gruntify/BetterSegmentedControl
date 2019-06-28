@@ -19,6 +19,7 @@ open class LabelSegment: BetterSegmentedControlSegment {
     
     // MARK: Properties
     public let text: String?
+    public let attributedText: NSAttributedString?
     
     public let normalFont: UIFont
     public let normalTextColor: UIColor
@@ -40,6 +41,26 @@ open class LabelSegment: BetterSegmentedControlSegment {
                 selectedTextColor: UIColor? = nil,
                 accessibilityIdentifier: String? = nil) {
         self.text = text
+        self.attributedText = nil
+        self.normalBackgroundColor = normalBackgroundColor ?? DefaultValues.normalBackgroundColor
+        self.normalFont = normalFont ?? DefaultValues.font
+        self.normalTextColor = normalTextColor ?? DefaultValues.normalTextColor
+        self.selectedBackgroundColor = selectedBackgroundColor ?? DefaultValues.selectedBackgroundColor
+        self.selectedFont = selectedFont ?? DefaultValues.font
+        self.selectedTextColor = selectedTextColor ?? DefaultValues.selectedTextColor
+        self.accessibilityIdentifier = accessibilityIdentifier
+    }
+    
+    public init(text: NSAttributedString? = nil,
+                normalBackgroundColor: UIColor? = nil,
+                normalFont: UIFont? = nil,
+                normalTextColor: UIColor? = nil,
+                selectedBackgroundColor: UIColor? = nil,
+                selectedFont: UIFont? = nil,
+                selectedTextColor: UIColor? = nil,
+                accessibilityIdentifier: String? = nil) {
+        self.text = nil
+        self.attributedText = text
         self.normalBackgroundColor = normalBackgroundColor ?? DefaultValues.normalBackgroundColor
         self.normalFont = normalFont ?? DefaultValues.font
         self.normalTextColor = normalTextColor ?? DefaultValues.normalTextColor
@@ -51,12 +72,24 @@ open class LabelSegment: BetterSegmentedControlSegment {
     
     // MARK: BetterSegmentedControlSegment
     public lazy var normalView: UIView = {
+        if let attributedText = attributedText {
+            return label(withText: attributedText,
+                         backgroundColor: normalBackgroundColor,
+                         font: normalFont,
+                         textColor: normalTextColor)
+        }
         return label(withText: text,
                      backgroundColor: normalBackgroundColor,
                      font: normalFont,
                      textColor: normalTextColor)
     }()
     public lazy var selectedView: UIView = {
+        if let attributedText = attributedText {
+            return label(withText: attributedText,
+                         backgroundColor: selectedBackgroundColor,
+                         font: selectedFont,
+                         textColor: selectedTextColor)
+        }
         return label(withText: text,
                      backgroundColor: selectedBackgroundColor,
                      font: selectedFont,
@@ -76,6 +109,22 @@ open class LabelSegment: BetterSegmentedControlSegment {
         if let identifier = accessibilityIdentifier {
             label.accessibilityIdentifier = identifier
         }
+        return label
+    }
+    private func label(withText text: NSAttributedString?,
+                       backgroundColor: UIColor,
+                       font: UIFont,
+                       textColor: UIColor) -> UILabel {
+        let label = UILabel()
+        label.backgroundColor = backgroundColor
+        label.font = font
+        label.textColor = textColor
+        label.lineBreakMode = .byTruncatingTail
+        label.textAlignment = .center
+        if let identifier = accessibilityIdentifier {
+            label.accessibilityIdentifier = identifier
+        }
+        label.attributedText = text
         return label
     }
 }
@@ -116,6 +165,24 @@ public extension LabelSegment {
                          selectedFont: selectedFont,
                          selectedTextColor: selectedTextColor,
                          accessibilityIdentifier: $0.accessibilityIdentifier)
+        }
+    }
+    
+    class func segments(withTitles titles: [NSAttributedString],
+                        normalBackgroundColor: UIColor? = nil,
+                        normalFont: UIFont? = nil,
+                        normalTextColor: UIColor? = nil,
+                        selectedBackgroundColor: UIColor? = nil,
+                        selectedFont: UIFont? = nil,
+                        selectedTextColor: UIColor? = nil) -> [BetterSegmentedControlSegment] {
+        return titles.map {
+            LabelSegment(text: $0,
+                         normalBackgroundColor: normalBackgroundColor,
+                         normalFont: normalFont,
+                         normalTextColor: normalTextColor,
+                         selectedBackgroundColor: selectedBackgroundColor,
+                         selectedFont: selectedFont,
+                         selectedTextColor: selectedTextColor)
         }
     }
 }
