@@ -96,7 +96,7 @@ class ViewController: UIViewController {
         separatorControl.showsSeparators = true
         separatorControl.separatorColor = .red
         separatorControl.separatorWidth = 2
-        separatorControl.separatorInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        separatorControl.separatorHeight = 20
         
         view.addSubview(separatorControl)
     }
