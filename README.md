@@ -1,6 +1,7 @@
 # BetterSegmentedControl
 
 _This is a fork from Tyson's fork!_
+_Edited ReadMe 22/03/2022_
 
 ![](https://img.shields.io/badge/Swift-4.1-blue.svg?style=flat)
 [![Version](https://img.shields.io/cocoapods/v/BetterSegmentedControl.svg?style=flat)](http://cocoapods.org/pods/BetterSegmentedControl)
