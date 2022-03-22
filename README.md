@@ -1,5 +1,7 @@
 # BetterSegmentedControl
 
+_This is a fork from Tyson's fork!_
+
 ![](https://img.shields.io/badge/Swift-4.1-blue.svg?style=flat)
 [![Version](https://img.shields.io/cocoapods/v/BetterSegmentedControl.svg?style=flat)](http://cocoapods.org/pods/BetterSegmentedControl)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
