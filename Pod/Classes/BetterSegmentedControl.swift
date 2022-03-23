@@ -51,7 +51,7 @@ import Foundation
     /// The segments available for selection
     public var segments: [BetterSegmentedControlSegment] {
         didSet {
-            guard segments.count > 1 else {
+            guard segments.count >= 1 else {
                 return
             }
             
