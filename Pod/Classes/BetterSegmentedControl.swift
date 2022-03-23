@@ -254,7 +254,7 @@ import Foundation
         panGestureRecognizer.delegate = self
         addGestureRecognizer(panGestureRecognizer)
         
-        guard segments.count > 1 else { return }
+        guard segments.count >= 1 else { return }
         
         for (index, segment) in segments.enumerated() {
             segment.normalView.clipsToBounds = true
