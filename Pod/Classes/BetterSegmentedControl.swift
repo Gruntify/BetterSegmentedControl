@@ -271,7 +271,7 @@ import Foundation
     override open func layoutSubviews() {
         super.layoutSubviews()
 
-        guard normalSegmentCount > 1 else {
+        guard normalSegmentCount >= 1 else {
             return
         }
         
